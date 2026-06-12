@@ -68,6 +68,14 @@ Jarvis/
 
 ## Getting Started
 
+### How to use this guide
+
+Everything you need is in the **[Jarvis Setup Guide](./Jarvis%20Setup%20Guide.md)**. You run each step by copying the step's prompt text and pasting it into a new Claude Cowork task — that's it. No code, no CLI, no config files.
+
+> **Copy → Paste → Run.** That's the entire setup loop.
+
+If you're sharing this with a teammate, send them the setup guide link or paste the markdown directly into Slack. They open it, copy each step, paste into Cowork, and they're done.
+
 ### Prerequisites
 
 Before running any setup step, connect these in Cowork **Settings → Connectors**:
@@ -83,7 +91,7 @@ You'll also need your **Slack User ID** — find it in Slack under your profile 
 
 ### Setup Steps
 
-Open the **[Jarvis Setup Guide](./Jarvis%20Setup%20Guide.md)** and run each step as its own Cowork task, in order:
+Open the **[Jarvis Setup Guide](./Jarvis%20Setup%20Guide.md)** and run each step as its own Cowork task, in order. For each step: copy the prompt → open a new Cowork task → paste → send.
 
 | Step | What it builds | Time |
 | :---- | :---- | :---- |
@@ -95,7 +103,13 @@ Open the **[Jarvis Setup Guide](./Jarvis%20Setup%20Guide.md)** and run each step
 | Step 5a–d | Four scheduled automations | ~5 min |
 | Step 6 | Live account dashboard artifact | ~3 min |
 
-**After setup:** Go to Cowork **Settings → Default Folder**, select your **Jarvis** folder. Every new task will load Jarvis context automatically.
+### Last step: set Jarvis as your default folder
+
+Once setup is complete, do this one thing so every future task loads Jarvis automatically:
+
+1. Go to Cowork **Settings → Default Task Context** (or **Default Folder**)
+2. Select your **Jarvis** folder
+3. Done — every new task now opens with full Jarvis context loaded
 
 ### The Golden Rule
 
