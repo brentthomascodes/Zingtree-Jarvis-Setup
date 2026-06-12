@@ -1,160 +1,45 @@
-# Jarvis — Your Personal AI Workspace for Claude Cowork
+# Jarvis — AI Workspace for Claude Cowork
 
-Jarvis is a structured AI workspace built on top of [Claude Cowork](https://claude.ai). It gives you a persistent, context-aware assistant that knows your voice, tracks your accounts, briefs you every morning, and routes every task to the right place — automatically.
+## Setup (30 minutes)
 
-This repo contains the complete setup guide to get your own Jarvis running in about 30 minutes.
+1. Connect **Gmail, Slack, Google Calendar** in Cowork → Settings → Connectors
+2. Grab your **Slack User ID** (your profile → More → Copy member ID)
+3. Open the **[Jarvis Setup Guide](./Jarvis%20Setup%20Guide.md)** — copy each step's prompt, paste it into a new Cowork task, run it in order
+4. When done: Cowork → Settings → **Default Task Context** → select your **Jarvis** folder
 
----
-
-## What Is Jarvis?
-
-Jarvis is not a single prompt. It's a folder-based system that lives inside Claude Cowork and gives the AI persistent memory, a voice profile trained on your actual writing, dedicated workstations for different types of work, and background automations that run without you asking.
-
-Every piece of context Jarvis needs is stored in files — CLAUDE.md (rules and routing), MEMORY.md (facts, decisions, contacts), and voice-principles.md (your writing style). When you open a new task with the Jarvis folder selected, the AI reads those files automatically and picks up exactly where you left off.
+That's it. Every new task now loads with full context automatically.
 
 ---
 
-## How It Works
+## Why it's worth the 30 minutes
+
+- **No re-explaining yourself** — Jarvis knows your role, accounts, and preferences from session one
+- **Drafts in your voice** — extracted from your actual sent emails, updated monthly
+- **Persistent memory** — say "remember this" and it's logged; no manual notes
+- **Account tracking** — every customer gets its own sub-workspace that builds context over time
+- **Proactive briefings** — 7am Slack DM surfacing what needs attention before you open your inbox
+
+---
+
+## How it works
 
 ```
 Jarvis/
-├── CLAUDE.md               ← Rules, routing map, preferences
-├── MEMORY.md               ← Facts, decisions, active projects
+├── CLAUDE.md            ← Your rules, routing map, preferences
+├── MEMORY.md            ← Facts, decisions, active projects
 ├── 00_Resources/
-│   └── voice-principles.md ← Your writing style, extracted from Gmail
-├── Email HQ/               ← Drafts, replies, thread management
-├── Account Management HQ/  ← One sub-workspace per customer account
-│   └── Acme HQ/
-│       ├── CLAUDE.md
-│       └── MEMORY.md
-├── Workstation Factory/    ← Scaffolds new workstations on demand
-└── Scheduled/              ← Background automation skill files
+│   └── voice-principles.md
+├── Email HQ/
+├── Account Management HQ/
+└── Workstation Factory/
 ```
 
-**The routing engine** — Jarvis reads your request, checks the Routing Map in CLAUDE.md, and loads the right workstation's context before responding. Email → Email HQ. Anything mentioning a company or person → Account Management HQ (creates a sub-workspace on the spot if none exists).
+Jarvis is a folder that lives inside Cowork. When you open a task with Jarvis selected as your default context, the AI reads your CLAUDE.md and MEMORY.md automatically — so it already knows who you are, how you work, and what's going on.
 
-**Memory** — Say "remember this" at any point and Jarvis logs it to the correct MEMORY.md with a timestamp. No manual notes.
+Your CLAUDE.md has a routing map: when you mention an account, it loads Account Management HQ. When you need to draft an email, it loads Email HQ. New workstations can be scaffolded on demand via Workstation Factory.
 
-**Voice** — Your voice profile is extracted from your actual sent emails and updated monthly. Drafts sound like you, not like an AI.
-
-**Automations** — Four scheduled tasks run in the background: a morning briefing (Slack DM at 7am), twice-daily account syncs, an hourly sweep, and a monthly voice refresh.
+**To use it:** open a new Cowork task (Jarvis folder selected), describe what you need, and go. Keep tasks short and focused — Jarvis is the context, not the thread.
 
 ---
 
-## Benefits
-
-**For individuals**
-- Start every task with full context — no re-explaining who you are or what you're working on
-- Drafts in your voice, not generic AI prose
-- Every customer account has its own memory that builds over time
-- Morning briefing surfaces what needs attention before you open your inbox
-
-**For teams**
-- Shareable setup — anyone at your org can run this guide and have a Jarvis tuned to their role in 30 minutes
-- Consistent account tracking across team members
-- Workstation Factory makes it easy to add new specialized assistants as your workflow evolves
-
-**vs. using Claude with no setup**
-| Without Jarvis | With Jarvis |
-| :---- | :---- |
-| Re-explain context every session | Context loads automatically |
-| Generic AI tone in drafts | Writes in your voice |
-| No memory between sessions | MEMORY.md persists everything |
-| Manual account tracking | Sub-workspaces with full history |
-| No proactive briefings | 7am Slack briefing, daily |
-| One-size-fits-all responses | Routed to the right workstation |
-
----
-
-## Getting Started
-
-### How to use this guide
-
-Everything you need is in the **[Jarvis Setup Guide](./Jarvis%20Setup%20Guide.md)**. You run each step by copying the step's prompt text and pasting it into a new Claude Cowork task — that's it. No code, no CLI, no config files.
-
-> **Copy → Paste → Run.** That's the entire setup loop.
-
-If you're sharing this with a teammate, send them the setup guide link or paste the markdown directly into Slack. They open it, copy each step, paste into Cowork, and they're done.
-
-### Prerequisites
-
-Before running any setup step, connect these in Cowork **Settings → Connectors**:
-
-| Connector | Required for |
-| :---- | :---- |
-| Gmail | Morning briefing, voice extraction, account sync |
-| Slack | All automations and briefings |
-| Google Calendar | Morning briefing |
-| Google Drive | Optional, recommended |
-
-You'll also need your **Slack User ID** — find it in Slack under your profile → "More" → "Copy member ID". It looks like `U08XXXXXXXX`.
-
-### Setup Steps
-
-Open the **[Jarvis Setup Guide](./Jarvis%20Setup%20Guide.md)** and run each step as its own Cowork task, in order. For each step: copy the prompt → open a new Cowork task → paste → send.
-
-| Step | What it builds | Time |
-| :---- | :---- | :---- |
-| Step 0 | Jarvis root folder + onboarding + live explainer artifact | ~5 min |
-| Step 1 | Root workspace files + voice profile from Gmail | ~10 min |
-| Step 2 | Email HQ workstation | ~2 min |
-| Step 3 | Account Management HQ + first account sub-workspace | ~3 min |
-| Step 4 | Workstation Factory | ~2 min |
-| Step 5a–d | Four scheduled automations | ~5 min |
-| Step 6 | Live account dashboard artifact | ~3 min |
-
-### Last step: set Jarvis as your default folder
-
-Once setup is complete, do this one thing so every future task loads Jarvis automatically:
-
-1. Go to Cowork **Settings → Default Task Context** (or **Default Folder**)
-2. Select your **Jarvis** folder
-3. Done — every new task now opens with full Jarvis context loaded
-
-### The Golden Rule
-
-> **Always work with Jarvis in a new task.**
-> Select the Jarvis folder. Keep sessions short and focused.
-> Long threads = slow, expensive, worse results. Jarvis is the context — not the thread.
-
----
-
-## Key Commands
-
-Once Jarvis is running, these phrases do the heavy lifting:
-
-| Say this | What happens |
-| :---- | :---- |
-| `"Remember this: [anything]"` | Logged to MEMORY.md with timestamp |
-| `"What's on my plate today?"` | Pulls open items across all accounts |
-| `"Prep me for my call with [Name]"` | Reads account context + recent comms |
-| `"Create a new account sub-HQ for [Company]"` | Scaffolds a full account workspace |
-| `"That doesn't sound like me — update voice-principles.md"` | Corrects your voice profile |
-| `"Create a new workstation for [purpose]"` | Routes to Workstation Factory |
-
----
-
-## Adding Workstations Over Time
-
-Jarvis is designed to grow with you. When you need a new specialized assistant (a hiring pipeline tracker, a content calendar, a legal review workspace), just say:
-
-> "Create a new workstation for [describe what you need]"
-
-Workstation Factory runs an intake, scaffolds the CLAUDE.md and MEMORY.md, and adds it to the routing map.
-
----
-
-## Automation Schedule
-
-| Task | When | What it does |
-| :---- | :---- | :---- |
-| Morning briefing | 7am daily | Emails + Slack + calendar → Slack DM |
-| Account sync | 6am + 6pm | Scans all accounts → updates MEMORY.md |
-| Hourly sweep | Every hour | Lightweight account activity check |
-| Voice refresh | 1st of each month | Re-extracts voice patterns from Gmail |
-
----
-
-## Questions or Issues
-
-This setup was built for the Zingtree team. For questions, reach out to [brent@zingtree.com](mailto:brent@zingtree.com).
+Questions? [brent@zingtree.com](mailto:brent@zingtree.com)
