@@ -17,9 +17,13 @@ Connect these in Cowork **Settings → Connectors** before running any step:
 | Gmail | Morning briefing, voice extraction, account sync |
 | Slack | All scheduled tasks, briefings, DMs |
 | Google Calendar | Morning briefing |
+| Salesforce | Account correlation — matches each Account HQ sub-folder to its CRM record (opportunities, stage, ARR, renewal, owner) |
+| Spiky | Meeting/call notes — builds call context, current work items, and status from recorded meetings |
 | Google Drive | Optional, recommended |
 
 **Find your Slack User ID:** Slack → your profile → "More" → "Copy member ID". Looks like `U08XXXXXXXX`.
+
+**Salesforce + Spiky:** Add both from Cowork **Settings → Connectors** and complete the sign-in/authorization flow for each before running Step 3 or any scheduled task. If either shows as "needs authorization," finish that in your connector settings — Jarvis can't authorize them mid-task. Once connected, Jarvis correlates every account with its Salesforce record and pulls Spiky notes for relevant meetings automatically.
 
 ### How to use this guide
 > **Always run each step in a new Cowork task.** Jarvis is the context — not the thread. Long threads produce slow, expensive, lower-quality results. One task per step. When you're done with a step, close it and open a new one.
@@ -179,7 +183,7 @@ This tab is a visual, interactive explainer of the Jarvis system. Build it as a 
 SECTION 1 — THE BRAIN DIAGRAM
 An interactive SVG diagram showing how Jarvis works:
 - Center node: "Jarvis" (your root folder + CLAUDE.md)
-- Branches to: Memory (MEMORY.md), Voice (voice-principles.md), Workstations (Email HQ, Account HQ, etc.), Automations (scheduled tasks)
+- Branches to: Memory (MEMORY.md), Voice (voice-principles.md), Workstations (Email HQ, Account HQ, etc.), Automations (scheduled tasks), Connectors (Gmail, Slack, Salesforce, Spiky)
 - Clicking a node reveals a tooltip explaining what that component does
 - Use a clean, modern visual style
 
@@ -202,7 +206,7 @@ A checklist showing setup progress. Each step has a checkbox (stored in localSto
 ☐ Step 0 — Jarvis folder created + onboarding complete
 ☐ Step 1 — Root workspace + voice profile built
 ☐ Step 2 — Email HQ created
-☐ Step 3 — Account Management HQ created
+☐ Step 3 — Account Management HQ created (Salesforce + Spiky wired in)
 ☐ Step 4 — Workstation Factory created
 ☐ Step 5a — Morning briefing scheduled
 ☐ Step 5b — Account sync scheduled
@@ -220,9 +224,9 @@ Include these 8 examples:
 
 EXAMPLE 1 — Morning Briefing
 Scenario: You start your day and want to know what needs attention.
-What Jarvis does automatically: At 7am, scans your email and Slack, summarizes customer activity, lists today's calendar, and DMs you in Slack.
+What Jarvis does automatically: At 7am, scans your email and Slack, checks Salesforce for opportunity movement and recent Spiky call notes, summarizes customer activity, lists today's calendar, and DMs you in Slack.
 What you'd see: [Show a realistic mock Slack DM with formatted briefing output]
-Manual equivalent: 20-30 minutes scanning email + Slack yourself
+Manual equivalent: 20-30 minutes scanning email + Slack + CRM yourself
 
 EXAMPLE 2 — Draft a Client Email
 Scenario: A client emailed asking for a project status update.
@@ -239,7 +243,7 @@ Why it matters: Next time you ask about Acme, Jarvis already knows
 EXAMPLE 4 — Prep for a Meeting
 Scenario: You have a QBR with a client in 30 minutes.
 Prompt to use: "I have a QBR with Acme in 30 minutes. Pull everything I need to know."
-What Jarvis does: Reads Acme's MEMORY.md → checks recent Slack/email → summarizes open action items, key decisions, and anything overdue
+What Jarvis does: Reads Acme's MEMORY.md → pulls the latest Spiky notes from recent calls → checks the Salesforce record (open opportunities, stage, renewal) → checks recent Slack/email → summarizes open action items, key decisions, and anything overdue
 What you get: A briefing doc, ready in under 60 seconds
 
 EXAMPLE 5 — Build a New Workstation
@@ -311,7 +315,7 @@ Update Jarvis/MEMORY.md with:
 - My Slack User ID: [YOUR SLACK USER ID]
 - My manager: [MANAGER NAME] ([MANAGER EMAIL])
 - My team: [LIST TEAMMATES AND ROLES/EMAILS]
-- Main tools: Gmail, Slack, Google Calendar[, add others]
+- Main tools: Gmail, Slack, Google Calendar, Salesforce, Spiky[, add others]
 
 ---
 
@@ -410,6 +414,8 @@ Confirm all files created.
 
 ## Step 3 — Account Management HQ
 
+*This step wires in Salesforce and Spiky. Make sure both connectors are authorized (see Prerequisites) before running it.*
+
 ```
 None
 
@@ -420,53 +426,73 @@ Create Jarvis/Account Management HQ/CLAUDE.md:
 # Account Management HQ
 
 ## Identity
-This is [YOUR NAME]'s Account Management HQ. Everything related to managing customer accounts routes here — project status, action items, contacts, communications, and next steps. At the start of every session, read MEMORY.md in this folder.
+This is [YOUR NAME]'s Account Management HQ. Everything related to managing customer accounts routes here — project status, action items, contacts, communications, and next steps. Each account is a sub-HQ folder that corresponds to a real Salesforce account and its Spiky meeting history. At the start of every session, read MEMORY.md in this folder.
+
+## Connected Systems
+- **Salesforce** — the source of truth for each account's CRM record: account owner, open opportunities, stage, amount/ARR, renewal date, and recent activity. Every sub-HQ maps to one Salesforce account.
+- **Spiky** — meeting/call intelligence. Use Spiky notes from recent meetings tied to an account to build call context, surface current work items, and confirm status. Treat Spiky as the record of what was actually said on calls.
 
 ## Resources
 | Resource | Read when... |
 | :---- | :---- |
 | ../00_Resources/voice-principles.md | Drafting any external communication |
+| Salesforce (connector) | Confirming account status, opportunities, renewal, owner — correlate every sub-HQ with its Salesforce account |
+| Spiky (connector) | Prepping for or reviewing a call, or building context on current work items and status for an account |
 
 ## Workflow
 
 ### Starting a session
 1. Read this CLAUDE.md and MEMORY.md.
 2. If the user's prompt references any person, organization, or account — even in passing — search MEMORY.md for a matching sub-HQ before doing anything else.
-   - If a match is found: navigate to that sub-HQ, read its CLAUDE.md and MEMORY.md, and use that context to inform the response.
+   - If a match is found: navigate to that sub-HQ, read its CLAUDE.md and MEMORY.md, then correlate with Salesforce (look up the matching account/opportunities) and pull recent Spiky notes for that account. Use all three to inform the response.
    - If no match is found: pause the original request and run the New Account Intake below. Do not proceed until the sub-HQ is created.
 3. Check Slack and email for new activity on the account.
 4. Summarize open action items with due dates. Flag anything overdue or due within 48 hours.
 
+### Correlating with Salesforce
+- Every account sub-HQ maps to one Salesforce account. Store the Salesforce account name (and ID/link if known) in the sub-HQ's MEMORY.md under "Salesforce Snapshot."
+- When working an account, look it up in Salesforce and reconcile: open opportunities, stage, amount/ARR, close/renewal date, and account owner. If the folder name and the Salesforce account don't obviously match, ask me to confirm the mapping before relying on it.
+- When Salesforce and MEMORY.md disagree, flag the discrepancy — don't silently overwrite. Note the Salesforce value and ask.
+
+### Using Spiky for calls and account overviews
+- When prepping for a call, reviewing a call, or building an account overview, pull the relevant Spiky notes for that account's recent meetings first.
+- Use Spiky notes to build call context, extract current work items and commitments, and confirm the current status — all scoped to that org.
+- Log durable takeaways (decisions, commitments, new contacts, dates) into the sub-HQ MEMORY.md with a timestamp and a note that the source was a Spiky call. Keep the raw transcript in Spiky; store the distilled facts in MEMORY.md.
+
 ### New Account Intake
 When a person, org, or account is mentioned and no sub-HQ exists, ask:
 1. What is the full name of the account or organization?
-2. Who is the main point of contact (name, role, email)?
-3. What is the current status of the relationship? (prospect, active customer, partner, other)
-4. Are there any open projects or action items I should log immediately?
-5. Anything else I should know to start?
+2. What is the matching Salesforce account name (or link/ID)? If unsure, I'll look it up in Salesforce and confirm the mapping with you.
+3. Who is the main point of contact (name, role, email)?
+4. What is the current status of the relationship? (prospect, active customer, partner, other)
+5. Are there any open projects or action items I should log immediately?
+6. Anything else I should know to start?
 
-After collecting answers: create the sub-HQ, populate MEMORY.md with what was shared, add the account to the Managed Accounts table in this MEMORY.md, and add a routing row to Jarvis/CLAUDE.md. Then resume the original request.
+After collecting answers: look up the account in Salesforce to seed the Salesforce Snapshot, pull any existing Spiky notes for recent meetings, create the sub-HQ, populate MEMORY.md with what was shared plus the Salesforce/Spiky context, add the account to the Managed Accounts table in this MEMORY.md, and add a routing row to Jarvis/CLAUDE.md. Then resume the original request.
 
 ### Tracking action items
 - Log commitments in the account's MEMORY.md under Action Items.
 - Every item must have an owner and due date if known.
+- Cross-check action items against Spiky call notes and open Salesforce opportunities so nothing committed on a call is dropped.
 
 ### Creating a new account sub-HQ
 When I say "create a new account for [Name]":
 1. Create Jarvis/Account Management HQ/[Company] HQ/
 2. Add CLAUDE.md and MEMORY.md (standard structure below).
-3. Add org to MEMORY.md under "Managed Accounts."
-4. Add routing row to Jarvis/CLAUDE.md.
+3. Look up the account in Salesforce and seed the Salesforce Snapshot; pull recent Spiky notes.
+4. Add org to MEMORY.md under "Managed Accounts."
+5. Add routing row to Jarvis/CLAUDE.md.
 
 ### Standard sub-HQ structure
 CLAUDE.md: Identity, Resources, Workflow, Editorial Rules
-MEMORY.md sections: Contacts, Current Projects, Action Items, Key Decisions, Next Project
+MEMORY.md sections: Contacts, Salesforce Snapshot, Current Projects, Action Items, Recent Meetings (Spiky), Key Decisions, Next Project
 
 ## Editorial Rules
 Follow voice-principles.md.
 - Be direct and specific. No filler.
 - When flagging risk, lead with the impact, then the ask.
 - Never overpromise on timelines.
+- When you cite a fact from Salesforce or a Spiky call, say so, so I can trust the source.
 
 ---
 
@@ -476,9 +502,9 @@ Create Jarvis/Account Management HQ/MEMORY.md:
 *Last updated: [TODAY'S DATE]*
 
 ## Managed Accounts
-| Account | Sub-HQ | Status |
-| :---- | :---- | :---- |
-| [Add your accounts here] | | |
+| Account | Sub-HQ | Salesforce Account | Status |
+| :---- | :---- | :---- | :---- |
+| [Add your accounts here] | | | |
 
 ## Recent Sync Log
 
@@ -493,20 +519,25 @@ Jarvis/Account Management HQ/[Account] HQ/CLAUDE.md:
 # [Account] HQ
 
 ## Identity
-This is [YOUR NAME]'s workstation for [Account]. Route here for anything related to this account — project status, contacts, comms, action items, and next steps.
+This is [YOUR NAME]'s workstation for [Account]. Route here for anything related to this account — project status, contacts, comms, action items, and next steps. This account maps to the Salesforce account "[SALESFORCE ACCOUNT NAME]" and its Spiky meeting history.
 
 ## Resources
 | Resource | Read when... |
 | :---- | :---- |
 | ../../00_Resources/voice-principles.md | Drafting any communication |
+| Salesforce (connector) | Confirming status, opportunities, renewal, owner for this account |
+| Spiky (connector) | Prepping for/reviewing a call or building context on current work items and status |
 
 ## Workflow
 1. Read MEMORY.md before every session.
-2. Summarize open action items. Flag anything overdue or due within 48 hours.
-3. Check Slack and email for new activity before drafting anything.
+2. Correlate with Salesforce: look up this account, reconcile open opportunities, stage, amount/ARR, and renewal date against the Salesforce Snapshot in MEMORY.md. Flag discrepancies.
+3. For any call prep, call review, or account overview: pull recent Spiky notes for this account and use them to build context, current work items, and status.
+4. Summarize open action items. Flag anything overdue or due within 48 hours.
+5. Check Slack and email for new activity before drafting anything.
 
 ## Editorial Rules
 Follow voice-principles.md.
+- When citing a fact, note whether it came from Salesforce, a Spiky call, email, or Slack.
 
 ---
 
@@ -519,10 +550,22 @@ Jarvis/Account Management HQ/[Account] HQ/MEMORY.md:
 | Name | Role | Email |
 | :---- | :---- | :---- |
 
+## Salesforce Snapshot
+*Correlated with Salesforce — update on each sync.*
+- Salesforce account: [NAME / ID / LINK]
+- Account owner:
+- Open opportunities (name, stage, amount, close/renewal date):
+- Last CRM activity:
+
 ## Current Projects
 
 ## Action Items
-| Owner | Item | Due Date | Status |
+| Owner | Item | Due Date | Status | Source |
+| :---- | :---- | :---- | :---- | :---- |
+
+## Recent Meetings (Spiky)
+*Distilled from Spiky call notes — link back to Spiky for full transcripts.*
+| Date | Meeting | Key takeaways / work items | Status |
 | :---- | :---- | :---- | :---- |
 
 ## Key Decisions
@@ -622,7 +665,7 @@ Create Jarvis/Scheduled/morning-customer-briefing/SKILL.md:
 
 ---
 name: morning-customer-briefing
-description: Daily 7am briefing — customer emails + Slack threads, posted to my Slack DM
+description: Daily 7am briefing — customer emails + Slack threads + Salesforce movement + Spiky calls, posted to my Slack DM
 ---
 
 Build [YOUR NAME]'s ([YOUR EMAIL], Slack [YOUR SLACK USER ID]) daily morning briefing and post it to their Slack DM.
@@ -641,12 +684,20 @@ For each account, search Slack for the account/customer name. One-line summary +
 STEP 3 — SLACK THREADS WORTH KNOWING:
 Search last 2 days for mentions of [YOUR NAME]: "<@[YOUR SLACK USER ID]>" and "to:<@[YOUR SLACK USER ID]>". Also monitor threads from [LIST KEY TEAMMATES] about strategy, product direction, or decisions worth knowing. 1-2 lines per match, with permalink.
 
-STEP 4 — CALENDAR:
-List today's meetings (time, title, attendees).
+STEP 4 — SALESFORCE MOVEMENT (per managed account):
+For each managed account, check Salesforce for changes in the last day: opportunity stage changes, new/closed opportunities, upcoming renewal or close dates within 30 days, and owner changes. One line per account with anything material. Skip accounts with no change.
+
+STEP 5 — SPIKY CALL NOTES (last 24h):
+Check Spiky for calls recorded in the last day tied to any managed account. For each: account, meeting title, 1-2 sentence takeaway, and any new work item or commitment for [YOUR NAME]. Link back to the Spiky note.
+
+STEP 6 — CALENDAR:
+List today's meetings (time, title, attendees). For any meeting tied to a managed account, note that a Spiky/account prep is available on request.
 
 FORMAT (Slack mrkdwn):
 *:sunrise: Morning Briefing — <date>*
 *:office: Customer Accounts*
+*:chart_with_upwards_trend: Salesforce — Movement & Renewals*
+*:studio_microphone: Recent Calls (Spiky)*
 *:speech_balloon: Slack — Worth Knowing*
 *:calendar_spiral: Today's Calendar*
 *:dart: Top action items for today*
@@ -669,22 +720,24 @@ Create Jarvis/Scheduled/customer-account-sync/SKILL.md:
 
 ---
 name: customer-account-sync
-description: Twice-daily scan of Slack and email for customer updates — writes findings to MEMORY.md files
+description: Twice-daily scan of Slack, email, Salesforce, and Spiky for customer updates — writes findings to MEMORY.md files
 ---
 
-You are [YOUR NAME]'s account assistant. Scan Slack and Gmail for new activity and update MEMORY.md files.
+You are [YOUR NAME]'s account assistant. Scan Slack, Gmail, Salesforce, and Spiky for new activity and update MEMORY.md files.
 
 ## Accounts
-[LIST EACH ACCOUNT AND PATH, e.g.:]
-- **Acme Corp** — Jarvis/Account Management HQ/Acme HQ/MEMORY.md
+[LIST EACH ACCOUNT, ITS SALESFORCE ACCOUNT NAME, AND PATH, e.g.:]
+- **Acme Corp** — Salesforce: "Acme Corporation" — Jarvis/Account Management HQ/Acme HQ/MEMORY.md
 
 ## Steps
 1. Search Slack for each account name (last 12 hours). Read full threads.
 2. Search Gmail for each account name (last 12 hours).
-3. Extract: account changes, key dates, requirements, risks, decisions, action items for [YOUR NAME].
-4. Update each account's MEMORY.md — append only, never overwrite. Timestamp all entries.
-5. Update Jarvis/Account Management HQ/MEMORY.md with a one-sentence summary of changes.
-6. Report: which accounts had activity and what changed. Skip accounts with nothing new.
+3. Correlate with Salesforce for each account: opportunity stage changes, new/closed opportunities, amount/ARR changes, upcoming renewal/close dates, owner changes. Reconcile against the Salesforce Snapshot in MEMORY.md and update it; flag any discrepancy instead of silently overwriting.
+4. Check Spiky for calls tied to each account in the last 12 hours. Distill takeaways, work items, decisions, and new contacts into the "Recent Meetings (Spiky)" table in that account's MEMORY.md.
+5. Extract: account changes, key dates, requirements, risks, decisions, action items for [YOUR NAME].
+6. Update each account's MEMORY.md — append only, never overwrite. Timestamp all entries and note the source (Slack, email, Salesforce, or Spiky).
+7. Update Jarvis/Account Management HQ/MEMORY.md with a one-sentence summary of changes per account.
+8. Report: which accounts had activity and what changed. Skip accounts with nothing new.
 
 ---
 
@@ -702,22 +755,23 @@ Create Jarvis/Scheduled/customer-account-hourly-review/SKILL.md:
 
 ---
 name: customer-account-hourly-review
-description: Hourly account sweep — finds new Slack/email activity and updates MEMORY.md files
+description: Hourly account sweep — finds new Slack/email/Spiky activity and updates MEMORY.md files
 ---
 
-Run an hourly sweep for [YOUR NAME]. Search Slack and email for new activity in the last 2 hours across all managed accounts.
+Run an hourly sweep for [YOUR NAME]. Search Slack, email, and Spiky for new activity in the last 2 hours across all managed accounts.
 
 ## Accounts
-[LIST EACH ACCOUNT WITH SLACK KEYWORDS AND MEMORY.md PATH, e.g.:]
-1. **Acme Corp** — Slack: #acme + keyword "Acme" | Jarvis/Account Management HQ/Acme HQ/MEMORY.md
+[LIST EACH ACCOUNT WITH SLACK KEYWORDS, SALESFORCE ACCOUNT NAME, AND MEMORY.md PATH, e.g.:]
+1. **Acme Corp** — Slack: #acme + keyword "Acme" | Salesforce: "Acme Corporation" | Jarvis/Account Management HQ/Acme HQ/MEMORY.md
 
 ## Steps
 1. Search Slack (slack_search_public_and_private, sort by timestamp) for each account.
 2. Search Gmail (newer_than:2h) for each account.
-3. Extract: action items, decisions, project updates, feedback, new contacts.
-4. Read existing MEMORY.md before updating. Only update with genuinely new info. Append, never overwrite.
-5. Update Jarvis/Account Management HQ/MEMORY.md "Recent Sync Log" if anything changed materially.
-6. Skip accounts with no new activity.
+3. Check Spiky for any call recorded in the last 2 hours tied to each account; distill new work items, commitments, and decisions.
+4. Extract: action items, decisions, project updates, feedback, new contacts.
+5. Read existing MEMORY.md before updating. Only update with genuinely new info. Append, never overwrite. Note the source.
+6. Update Jarvis/Account Management HQ/MEMORY.md "Recent Sync Log" if anything changed materially.
+7. Skip accounts with no new activity. (Salesforce is reconciled in the twice-daily sync, not hourly.)
 
 ---
 
@@ -780,12 +834,12 @@ None
 
 Read all MEMORY.md files in Jarvis/Account Management HQ/ and its sub-HQs. Then create a live artifact called "account-dashboard" that:
 
-1. Shows a card per account with: account name, open action items (owner + due date), last updated date
-2. Flags overdue items in red, items due within 48 hours in yellow
-3. Shows a header with today's date and total open action item count
+1. Shows a card per account with: account name, open action items (owner + due date), Salesforce snapshot (stage, amount/ARR, renewal date), most recent Spiky call date + one-line takeaway, and last updated date
+2. Flags overdue items in red, items due within 48 hours in yellow, and renewals within 30 days in yellow
+3. Shows a header with today's date, total open action item count, and total ARR across accounts if available
 4. Has a clean, professional card layout in a responsive grid
 
-Use the actual data from my MEMORY.md files to seed the initial view.
+Use the actual data from my MEMORY.md files (including the Salesforce Snapshot and Recent Meetings sections) to seed the initial view.
 
 Tell me how to refresh it after MEMORY.md files are updated.
 ```
@@ -797,17 +851,18 @@ Tell me how to refresh it after MEMORY.md files are updated.
 ### Automation Schedule
 | Automation | When | What it does |
 | :---- | :---- | :---- |
-| Morning briefing | 7am daily | Emails + Slack + calendar → DM |
-| Account sync | 6am + 6pm | Scans all accounts → updates MEMORY.md |
-| Hourly sweep | Every hour | Lightweight account update |
+| Morning briefing | 7am daily | Emails + Slack + Salesforce movement + Spiky calls + calendar → DM |
+| Account sync | 6am + 6pm | Scans Slack, email, Salesforce, Spiky → updates MEMORY.md |
+| Hourly sweep | Every hour | Lightweight Slack/email/Spiky account update |
 | Voice refresh | 1st of month | Re-trains voice profile from Gmail |
 
 ### Power Phrases
 - **"Remember this"** — logs anything to the right MEMORY.md automatically
-- **"Create a new account sub-HQ for [Name]"** — scaffolds a full account workspace
+- **"Create a new account sub-HQ for [Name]"** — scaffolds a full account workspace and correlates it with Salesforce + Spiky
 - **"That doesn't sound like me — update voice-principles.md"** — corrects your voice profile on the spot
 - **"What's on my plate today?"** — pulls open items across all accounts
-- **"Prep me for my call with [Name]"** — reads account MEMORY.md + recent comms and briefs you
+- **"Prep me for my call with [Name]"** — reads account MEMORY.md, pulls recent Spiky call notes, checks the Salesforce record, and briefs you
+- **"Give me an overview of [Account]"** — combines MEMORY.md, Salesforce status, and recent Spiky notes into a single picture of work items and status
 
 ### The Golden Rule
 > Open a new task. Select the Jarvis folder. Keep it short.
